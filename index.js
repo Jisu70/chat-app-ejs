@@ -1,6 +1,6 @@
 // external imports
 const express = require("express");
-const dotenv = require("dotenv");
+const dotenv = require("dotenv").config()
 const path = require("path");
 const cookieParser = require("cookie-parser");
 // const loginRouter = require("./router/loginRouter");
@@ -15,9 +15,9 @@ const {
 } = require("./middlewares/common/errorHandler.js");
 
 const app = express();
-dotenv.config();
 
 
+dbConnect()
 
 // request parsers
 app.use(express.json());
