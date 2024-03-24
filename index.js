@@ -4,8 +4,8 @@ const dotenv = require("dotenv").config()
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const loginRouter = require("./routers/loginRouter.js");
-const usersRouter = require("./router/usersRouter.js");
-const inboxRouter = require("./router/inboxRouter.js");
+const usersRouter = require("./routers/usersRouter.js");
+const inboxRouter = require("./routers/inboxRouter.js");
 // DB connection
 const dbConnect = require('./utils/dbConnect.js')
 // internal imports
