@@ -3,9 +3,9 @@ const express = require("express");
 const dotenv = require("dotenv").config()
 const path = require("path");
 const cookieParser = require("cookie-parser");
-// const loginRouter = require("./router/loginRouter");
-// const usersRouter = require("./router/usersRouter");
-// const inboxRouter = require("./router/inboxRouter");
+const loginRouter = require("./routers/loginRouter.js");
+const usersRouter = require("./router/usersRouter.js");
+const inboxRouter = require("./router/inboxRouter.js");
 // DB connection
 const dbConnect = require('./utils/dbConnect.js')
 // internal imports
@@ -33,9 +33,9 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
 // routing setup
-// app.use("/", loginRouter);
-// app.use("/users", usersRouter);
-// app.use("/inbox", inboxRouter);
+app.use("/", loginRouter);
+app.use("/users", usersRouter);
+app.use("/inbox", inboxRouter);
 
 // 404 not found handler
 app.use(notFoundHandler);

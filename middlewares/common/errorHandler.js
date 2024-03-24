@@ -10,7 +10,17 @@ function notFoundHandler(req, res, next) {
 // default error handler
 function errorHandler(err, req, res, next) {
     res.locals.title = "Hello world" // <-------------- In this way we can send the variables on the page 
-    res.render('error')
+    res.locals.error = process.env.NODE_ENV === 'development' ? err : { message : err.message} ;
+    res.status(err.status || 500)
+    if (res.locals?.html) {
+        // Html response
+        res.render('error',{
+            title : "Error Page"
+        })
+    }else{
+        // Json response
+        res.json(res.locals.error)
+    }
 }
 
 
