@@ -1,8 +1,15 @@
 // Importing express
 const express = require('express');
-const router = express.Router() ;
-const { getUsers} = require('../controllers/usersController.js')
+const { getUsers, addUser } = require('../controllers/usersController.js');
+// File upload middleware
+const { avatarUpload } = require("../middlewares/users/avatarUpload.js")
+const { addUserValidators,   addUserValidationHandler} = require("../middlewares/users/userValidator.js")
 
-router.get('/', getUsers ) ;
 
-module.exports = router ;
+const router = express.Router();
+
+router.get('/', getUsers);
+
+router.post('/', avatarUpload, addUserValidators, addUserValidationHandler, addUser );
+
+module.exports = router;

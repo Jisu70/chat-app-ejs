@@ -8,6 +8,20 @@ const getLogin = (req, res) => {
     }
 }
 
+// save user 
+const saveUser = (req, res) => {
+    console.log("Got clicked");
+    try {
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            status : "error",
+            message : "there was a problem to handle your request"
+        })
+    }
+}
+
 
 module.exports = {
     getLogin

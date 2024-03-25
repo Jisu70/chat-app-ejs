@@ -16,7 +16,6 @@ const {
 
 const app = express();
 
-
 dbConnect()
 
 // request parsers
