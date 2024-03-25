@@ -1,16 +1,18 @@
 // external imports
 const bcrypt = require("bcrypt");
-const { unlink } = require("fs");
-const path = require("path");
+
 
 // internal imports
 const User = require("../models/People");
 
 // rendering the user page 
-const getUsers = (req, res) => {
+const getUsers = async (req, res) => {
 try {
+    // Get all the user
+    const allusers = await User.find({}, { password: 0 });
     res.render('users', {
-        title : "Users Page"
+        title : "Users Page",
+        allusers
     })
 } catch (error) {
     console.log(error)

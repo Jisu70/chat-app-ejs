@@ -30,10 +30,8 @@ const addUserValidators = [
         }
       }),
     check("mobile")
-      .isMobilePhone("in-IN", {
-        strictMode: true,
-      })
-      .withMessage("Mobile number must be a valid mobile number")
+      .isMobilePhone()
+      .withMessage("Mobile number must be a valid Indian mobile number")
       .custom(async (value) => {
         try {
           const user = await User.findOne({ mobile: value });
@@ -41,6 +39,7 @@ const addUserValidators = [
             throw createError("Mobile already is use!");
           }
         } catch (err) {
+          console.log(err);
           throw createError(err.message);
         }
       }),
@@ -61,7 +60,7 @@ const addUserValidationHandler = function (req, res, next) {
       if (req.files.length > 0) {
         const { filename } = req.files[0];
         unlink(
-          path.join(__dirname, `/../public/uploads/avatars/${filename}`),
+          path.join(__dirname, `/../../public/uploads/avatars/${filename}`),
           (err) => {
             if (err) console.log(err);
           }
