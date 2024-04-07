@@ -13,7 +13,7 @@ const {
   notFoundHandler,
   errorHandler,
 } = require("./middlewares/common/errorHandler.js");
-
+ 
 const app = express();
 
 dbConnect()
@@ -38,7 +38,6 @@ app.use("/inbox", inboxRouter);
 
 // 404 not found handler
 app.use(notFoundHandler);
-
 // common error handler
 app.use(errorHandler);
 // dbConnect()

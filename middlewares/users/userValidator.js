@@ -7,7 +7,9 @@ const { unlink } = require("fs");
 const User = require("../../models/People");
 
 
-// add user
+/**
+ * addUserValidators is validator that validates user's input while signup.
+ */
 const addUserValidators = [
     check("name")
       .isLength({ min: 1 })
@@ -49,7 +51,12 @@ const addUserValidators = [
         "Password must be at least 8 characters long & should contain at least 1 lowercase, 1 uppercase, 1 number & 1 symbol"
       ),
 ];
-
+/**
+ * addUserValidationHandler is middleware function is checking error while adding a new user, in this process if any error occured it will unlink the uploaded file.
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
 const addUserValidationHandler = function (req, res, next) {
     const errors = validationResult(req);
     const mappedErrors = errors.mapped();

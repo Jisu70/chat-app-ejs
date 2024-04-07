@@ -10,27 +10,23 @@ const People = require('../models/People')
 const getLogin = (req, res) => {
     try {
         res.render('index', {
-            title : "Login Page"
         })
     } catch (error) {
-        console.log(error)
+        console.log(error);
+        return res.status(500).json({
+            status : "error",
+            message : "There was a problem."
+        })
     }
 }
 
 // save user 
 const loginUser = async (req, res) => {
     try {
-        const { emailOrMobile, password } = req.body ;
-
-        if (!emailOrMobile || !password) {
-            return res.status(400).json({
-                status: "error",
-                message: "Email or mobile and password must be provided."
-            });
-        }
+        const { username, password } = req.body ;
         
         const isUser = await People.findOne({ 
-            $or: [{ mobile : emailOrMobile }, { email : emailOrMobile}],
+            $or: [{ mobile : username }, { email : username}],
         }) ;
         if (!isUser) {
             return res.status(400).json({
@@ -67,13 +63,12 @@ const loginUser = async (req, res) => {
         // Redirect to inbox page
         res.render("inbox",{
             loggedInUser : userObject,
-            title : "Inbox page"
         });
     } catch (error) {
         console.log(error);
         res.render("index", {
             data: {
-                emailOrMobile
+                username
             },
             errors: {
               common: {
@@ -84,8 +79,14 @@ const loginUser = async (req, res) => {
     }
 }
 
-
+// Logout user
+function logout(req, res) {
+    res.clearCookie(process.env.COOKIE_NAME);
+    res.send("logged out");
+  }
+  
 module.exports = {
     getLogin,
-    loginUser
+    loginUser,
+    logout
 }

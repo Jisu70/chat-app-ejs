@@ -1,12 +1,19 @@
 // Importing express
 const express = require('express');
 const router = express.Router() ;
-const { getLogin, loginUser} = require('../controllers/loginController.js')
+const { getLogin, loginUser, logout} = require('../controllers/loginController.js')
+
+// Middlewares
+const { loginValidators, loginValidationHandler } = require('../middlewares/login/loginValidators.js');
+const decorateHtmlResponse = require("../middlewares/common/decorateHtmlResponse");
 
 // Render login Page
-router.get('/', getLogin ) ;
+router.get('/', decorateHtmlResponse("Login Page"), getLogin ) ;
 
 // Hnadle login Functionality
-router.post('/login', loginUser ) ;
+router.post('/', loginValidators, loginValidationHandler, loginUser ) ;
+
+// logout
+router.delete("/", logout);
 
 module.exports = router ;
