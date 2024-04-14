@@ -5,7 +5,7 @@ const { check, validationResult } = require("express-validator");
  * This validator is used to validate login inputs from the uer.
  */
 const loginValidators = [
-    check("emailOrMobile")
+    check("username")
         .isLength({ min: 1 })
         .withMessage("User email or mobile is required")
         .trim(),
@@ -29,7 +29,7 @@ const loginValidationHandler = function (req, res, next) {
         res.render("index", {
             title : "Login page",
             data: {
-              username: req.body.emailOrMobile,
+              username: req.body.username,
             },
             errors: mappedErrors,
           });

@@ -59,9 +59,9 @@ const loginUser = async (req, res) => {
             httpOnly: true,
             signed: true,
         });
-
         // Redirect to inbox page
         res.render("inbox",{
+            title : "Inbox Page",
             loggedInUser : userObject,
         });
     } catch (error) {
@@ -81,8 +81,16 @@ const loginUser = async (req, res) => {
 
 // Logout user
 function logout(req, res) {
-    res.clearCookie(process.env.COOKIE_NAME);
-    res.send("logged out");
+    try {
+        res.clearCookie(process.env.COOKIE_NAME);
+        res.status(200).json({
+            status : "ok",
+            message : "Logged out successfully. 🚀"
+        });
+        
+    } catch (error) {
+        console.log(error);
+    }
   }
   
 module.exports = {

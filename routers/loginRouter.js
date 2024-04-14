@@ -6,9 +6,10 @@ const { getLogin, loginUser, logout} = require('../controllers/loginController.j
 // Middlewares
 const { loginValidators, loginValidationHandler } = require('../middlewares/login/loginValidators.js');
 const decorateHtmlResponse = require("../middlewares/common/decorateHtmlResponse");
+const { redirectLoggedIn } = require('../middlewares/common/checkLogin.js')
 
 // Render login Page
-router.get('/', decorateHtmlResponse("Login Page"), getLogin ) ;
+router.get('/', decorateHtmlResponse("Login Page"), redirectLoggedIn, getLogin ) ;
 
 // Hnadle login Functionality
 router.post('/', loginValidators, loginValidationHandler, loginUser ) ;

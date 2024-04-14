@@ -12,7 +12,6 @@ const getUsers = async (req, res) => {
         // Get all the user
         const allusers = await User.find({}, { password: 0 });
         res.render('users', {
-            title: "Users Page",
             allusers
         })
     } catch (error) {

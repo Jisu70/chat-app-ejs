@@ -1,12 +1,4 @@
-/*
- * Title: Project style sheet
- * Description: This is the main project style sheet of this project
- * Author: Sumit Saha ( Learn with Sumit )
- * Date: 23/05/2021
- *
- */
 
-/* css custom properties */
 :root {
   --primary: #171c2a;
   --secondary: #11141f;
@@ -694,6 +686,52 @@ input[type="submit"]:active {
     to right,
     var(--green) 0%,
     var(--blue) 100%
-  );
-  background: linear-gradient(to right, var(--green) 0%, var(--blue) 100%);
+    );
+    background: linear-gradient(to right, var(--green) 0%, var(--blue) 100%);
+  }
+  
+  /* styles for footer */
+  .chat-footer {
+    background-color: #1f222e;
+    color: #ffffff;
+    text-align: center;
+    padding: 10px 0;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.footer-text {
+    color: #bd0048;
+}
+
+.footer-links, .social-media {
+    display: flex;
+    gap: 20px;
+}
+
+.footer-link, .social-link {
+    color: #6552d7;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-link:hover, .social-link:hover {
+    color: #bd0048;
+}
+
+.social-link img {
+    filter: grayscale(100%) contrast(1);
+    transition: filter 0.3s;
+}
+
+.social-link img:hover {
+    filter: none;
 }

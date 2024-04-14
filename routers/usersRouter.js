@@ -4,12 +4,12 @@ const { getUsers, addUser, deleteUser } = require('../controllers/usersControlle
 // File upload middleware
 const { avatarUpload } = require("../middlewares/users/avatarUpload.js")
 const { addUserValidators,   addUserValidationHandler} = require("../middlewares/users/userValidator.js")
-
+const decorateHtmlResponse = require('../middlewares/common/decorateHtmlResponse.js')
 
 const router = express.Router();
 
 // To rendering the page and showing all users 
-router.get('/', getUsers);
+router.get('/', decorateHtmlResponse("Inbox Page"), getUsers);
 // To save the user 
 router.post('/', avatarUpload, addUserValidators, addUserValidationHandler, addUser );
 // To Delete the user 
