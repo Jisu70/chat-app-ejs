@@ -9,4 +9,5 @@ const { checkLogin } = require('../middlewares/common/checkLogin.js')
 
 router.get('/', decorateHtmlResponse("Inbox"), checkLogin, getInbox ) ;
 
+
 module.exports = router ;

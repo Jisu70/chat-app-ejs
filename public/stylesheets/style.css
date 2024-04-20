@@ -749,3 +749,18 @@ input[type="submit"]:active {
   background-color: #7445aa; /* Background color for active link */
   font-weight: bold; /* Makes the active link bold */
 }
+
+
+#new-coversation-container a{
+  display: grid;
+  place-content: center;
+  background: #007BFF;
+  border: none;
+  border-radius: 50%;
+  color: white;
+  text-decoration: none;
+  font-size: 3.5rem;
+  width: 45px;
+  height: 43px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
