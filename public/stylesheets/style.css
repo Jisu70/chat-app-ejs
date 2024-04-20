@@ -735,3 +735,17 @@ input[type="submit"]:active {
 .social-link img:hover {
     filter: none;
 }
+
+
+.menu-item a {
+  color: black; /* Default color for non-active links */
+  text-decoration: none; /* Removes underline from links */
+  padding: 10px; /* Adds padding around the links */
+  display: block; /* Makes the link take the full space of the div */
+}
+
+.menu-item a.active {
+  color: white; /* Color for active link */
+  background-color: #7445aa; /* Background color for active link */
+  font-weight: bold; /* Makes the active link bold */
+}

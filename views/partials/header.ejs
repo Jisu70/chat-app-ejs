@@ -9,8 +9,8 @@
     <title><%= title %></title>
     <link rel="shortcut icon" href="./images/favicon.png" />
     <link rel="stylesheet" href="./stylesheets/toastify.css" />
-    <link rel="stylesheet" href="./stylesheets/style.css" />
     <script src="./js/toastify.js"></script>
+    <link rel="stylesheet" href="./stylesheets/style.css" />
   </head>
   <body>
     <div class="menu">
@@ -48,6 +48,24 @@
       console.log("Logout canceled by the user.");
     }
   }
+
+    // Function to set the active class on the current menu item
+    function setActiveMenuItem() {
+    const currentPath = window.location.pathname; 
+    const menuItems = document.querySelectorAll('.menu-item a');
+    
+    // Iterate over each menu item and set active class if href matches the current path
+    menuItems.forEach(item => {
+      if (item.getAttribute('href') === currentPath) {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
+    });
+  }
+
+  // Run the function on page load
+  window.onload = setActiveMenuItem;
 
 </script>
 </div>
