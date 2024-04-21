@@ -1,6 +1,6 @@
 // Importing express
 const express = require('express');
-const { getUsers, addUser, deleteUser } = require('../controllers/usersController.js');
+const { getUsers, addUser, deleteUser, searchUser } = require('../controllers/usersController.js');
 // File upload middleware
 const { avatarUpload } = require("../middlewares/users/avatarUpload.js")
 const { addUserValidators,   addUserValidationHandler} = require("../middlewares/users/userValidator.js")
@@ -15,4 +15,6 @@ router.get('/', decorateHtmlResponse("Inbox Page"), checkLogin, getUsers);
 router.post('/', avatarUpload, addUserValidators, addUserValidationHandler, addUser );
 // To Delete the user 
 router.delete('/:userId', deleteUser) ;
+// To find the user
+router.get('/search-user', searchUser )
 module.exports = router;

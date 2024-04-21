@@ -764,3 +764,43 @@ input[type="submit"]:active {
   height: 43px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
+
+.user {
+  display: flex;
+  align-items: center; /* Vertically centers the items in the container */
+  justify-content: start; /* Align items to the start of the container */
+  padding: 5px; /* Adds some padding around the items */
+  cursor: pointer; /* Changes cursor to pointer to indicate it's clickable */
+}
+
+.avatar img{
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-right: 10px; /* Adds space between the avatar and the username */
+}
+
+.username {
+  flex-grow: 1; /* Takes up remaining space to push other elements to the end if needed */
+  font-size: 16px; /* Optional: Adjusts the font size of the username */
+}
+
+.search_users {
+  display: flex;          /* This enables flexbox layout */
+  justify-content: space-around; /* This distributes space around items */
+  align-items: center;    /* This aligns items vertically at the center */
+}
+
+.user .avatar {
+  display: flex;          /* Enables flex layout for avatar and username */
+  align-items: center;    /* Aligns the image and the text vertically */
+}
+
+.user .avatar img {
+  width: 50px;            /* Adjust the size of the avatar as needed */
+  height: auto;           /* Keeps the aspect ratio of the image */
+  margin-right: 10px;     /* Space between the image and username */
+}
+

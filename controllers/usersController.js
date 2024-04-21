@@ -73,7 +73,7 @@ const deleteUser = async (req, res) => {
     console.log("delete function was clicked");
     try {
         const { userId } = req.params;
-        const deletedUser = await User.findByIdAndDelete({ _id: userId }); // findByIdAndDelete is retur the delete user also
+        const deletedUser = await User.findByIdAndDelete({ _id: userId });
         if (deletedUser?.avatar) {
             const filePath = path.join(__dirname, `../public/uploads/avatars/${deletedUser.avatar}`) ;
             fs.unlink(filePath,(err) => {
@@ -99,8 +99,40 @@ const deleteUser = async (req, res) => {
 
 }
 
+// Find user
+const searchUser = async (req, res) => {
+    try {
+        const { input } = req.query;
+        // regex search 
+        const searchRegex = new RegExp(input, 'i');
+        const isUser = await User.find({
+            $or: [
+                { name: { $regex: searchRegex } }, 
+                { email: { $regex: searchRegex } }, 
+                { mobile: { $regex: searchRegex } }
+            ]
+        }, { password: 0, createdAt : 0, updatedAt : 0, __v : 0 });
+        return res.status(200).json({
+            status : "ok",
+            data : isUser,
+            message : "search result fetched successfully."
+        })
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            errors: {
+              common: {
+                msg: err.message,
+              },
+            },
+        });
+    }
+}
+
+
 module.exports = {
     getUsers,
     addUser,
-    deleteUser
+    deleteUser,
+    searchUser
 }

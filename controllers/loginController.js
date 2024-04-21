@@ -41,11 +41,13 @@ const loginUser = async (req, res) => {
                 message : "Wrong password."
             });
         };
-        const {name , email, mobile} = isUser ;
+        const {_id, name , email, mobile, avatar} = isUser ;
         const userObject = {
+            _id,
             name,
             email,
-            mobile
+            mobile,
+            avatar
         }
 
         // generate token
