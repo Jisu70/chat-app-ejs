@@ -7,12 +7,14 @@ const People = require('../models/People') ;
 const getInbox = async (req, res) => {
     try {
         const user_id = req.user._id ; // Logged in user ID 
-        const all_conversation = await Conversation.find({'creator.id': user_id }, 'participant last_updated')
+        const all_conversation = await Conversation.find({'creator': user_id }, 'participant last_updated')
         .populate({
-            path: 'participant.id',
+            path: 'participant',
             select: 'name avatar' 
         })
         .sort({ last_updated: -1 });
+        console.log("all_conversation", all_conversation);
+        return res.send(all_conversation)
         res.render('inbox', {
             all_conversation
         })
@@ -26,12 +28,9 @@ const crerateConversation = async (req, res) => {
     try {
         const { id } = req.body;
         const creat_conversation = new Conversation({
-            creator: {
-                id: req.user._id
-            },
-            participant: {
-                id: id 
-            }
+            creator: req.user._id,
+            participant:  id 
+        
         })
 
         const save_conversation = await creat_conversation.save();
