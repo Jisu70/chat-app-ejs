@@ -101,53 +101,5 @@
       }
     }
   
-    // create Conversation
-    async function createConversation(participant_id, name, avatar) {
-      try {
-        const response = await fetch("/inbox/create-conversation", {
-          method: "POST",
-          body: JSON.stringify({
-            participant: name,
-            id: participant_id,
-            avatar: avatar != "undefined" ? avatar : null,
-          }),
-          headers: {
-            "Content-type": "application/json; charset=UTF-8",
-          },
-        });
-  
-        const result = response.json();
-  
-        if (!result.errors) {
-          // reset
-          users_placeholder.style.display = "none";
-          input.value = name;
-          // reload the page after 1 second
-          setTimeout(() => {
-            location.reload();
-          }, 1000);
-        } else {
-          throw new Error(result.errors.common.msg);
-        }
-      } catch (err) {
-        conversationFailureToast.showToast();
-      }
-    }
-    // To ACtive the slected chat
-    document.addEventListener("DOMContentLoaded", function() {
-    var conversations = document.querySelectorAll('.conversation');
-
-    conversations.forEach(function(conversation) {
-        conversation.addEventListener('click', function() {
-            // Remove 'active' class from all conversations
-            conversations.forEach(function(conv) {
-                conv.classList.remove('active');
-            });
-
-            // Add 'active' class to the clicked conversation
-            conversation.classList.add('active');
-        });
-    });
-});
 
   </script>

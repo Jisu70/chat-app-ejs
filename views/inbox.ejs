@@ -5,11 +5,12 @@
       </div>
       <div id="conversation-list">
         <% if (all_conversation.length > 0) { %>
+          <%= console.log(all_conversation); %>
           <% all_conversation.forEach((conversation) => { %>
-            <div class="conversation">
-              <img src="./uploads/avatars/<%= conversation.participant.avatar %>" alt="Sumit" />
-              <div class="title-text"><%= conversation.participant.name %></div>
-              <di class="created-date"> Apr 16 </di>
+            <div class="conversation" onclick="getMessages('<%= conversation._id %>')">
+              <img src="./uploads/avatars/<%= conversation.participant.id.avatar %>" alt="" />
+              <div class="title-text"><%= conversation.participant.id.name %></div>
+              <di class="created-date"> Apr 16 </di>x`
               <div class="conversation-message">This is a message</div>
             </div>
           <% }) %>
@@ -49,3 +50,73 @@
   </body>
 </html>
 <%- include('./partials/add-conversation-modal.ejs'); %>
+<script>
+  // create Conversation
+  async function createConversation(participant_id) {
+    try {
+      const response = await fetch("/inbox/create-conversation", {
+        method: "POST",
+        body: JSON.stringify({
+          id: participant_id,
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      });
+
+      const result = response.json();
+
+      if (!result.errors) {
+        // reset
+        users_placeholder.style.display = "none";
+        input.value = name;
+        // reload the page after 1 second
+        setTimeout(() => {
+          location.reload();
+        }, 1000);
+      } else {
+        throw new Error(result.errors.common.msg);
+      }
+    } catch (err) {
+      conversationFailureToast.showToast();
+    }
+  }
+  // To ACtive the slected chat
+  document.addEventListener("DOMContentLoaded", function () {
+    var conversations = document.querySelectorAll('.conversation');
+
+    conversations.forEach(function (conversation) {
+      conversation.addEventListener('click', function () {
+        // Remove 'active' class from all conversations
+        conversations.forEach(function (conv) {
+          conv.classList.remove('active');
+        });
+
+        // Add 'active' class to the clicked conversation
+        conversation.classList.add('active');
+      });
+    });
+  });
+
+  // Get message of the chats 
+  async function getMessages (conversation_id, name){
+    try {
+      const response = await fetch("/inbox/get-message", {
+        method: "POST",
+        body: JSON.stringify({
+          conversation_id,
+          name
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      });
+
+      const data = await response.json() ;
+      console.log("Inbox data of get message", data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+</script>
