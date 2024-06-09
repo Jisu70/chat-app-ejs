@@ -750,11 +750,14 @@ input[type="submit"]:active {
   font-weight: bold; /* Makes the active link bold */
 }
 
+#new-coversation-container{
+  background: #11141f;
+}
 
 #new-coversation-container a{
   display: grid;
   place-content: center;
-  background: #007BFF;
+  background: #a42892;
   border: none;
   border-radius: 50%;
   color: white;
@@ -804,3 +807,25 @@ input[type="submit"]:active {
   margin-right: 10px;     /* Space between the image and username */
 }
 
+.nothing {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-content: center;
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 2.5rem;
+}
+
+.nothing img {
+  width: 100%;
+  max-width: 120px;
+}
+
+@media only screen and (max-width: 1000px) {
+  .nothing {
+    display: none;
+  }
+}
+.hidden {
+  visibility: hidden;
+}
