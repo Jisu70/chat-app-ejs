@@ -692,8 +692,9 @@ input[type="submit"]:active {
   
   /* styles for footer */
   .chat-footer {
-    background-color: #1f222e;
-    color: #ffffff;
+    width: 10%;
+    /* background-color: #1f222e; */
+    /* color: #ffffff; */
     text-align: center;
     padding: 10px 0;
     font-family: Arial, sans-serif;

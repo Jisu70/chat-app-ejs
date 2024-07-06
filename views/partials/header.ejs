@@ -9,63 +9,17 @@
     <title><%= title %></title>
     <link rel="shortcut icon" href="./images/favicon.png" />
     <link rel="stylesheet" href="./stylesheets/toastify.css" />
-    <script src="./js/toastify.js"></script>
     <link rel="stylesheet" href="./stylesheets/style.css" />
+    <script src="./js/toastify.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   </head>
   <body>
     <div class="menu">
       <div class="menu-item"><a href="/inbox">Inbox</a></div>
-      <div class="menu-item"><a href="/users">Users</a></div>
-      <% if (loggedInUser && loggedInUser.name) { %>
-        <div class="menu-item" onclick="logOut()" ><a href="/">Logout</a></div>
-    <% } else { %>
-        <div class="menu-item"><a href="/">Login</a></div>
-    <% } %>
-<script>
-  // Toast message for log out ;
-  const logoutToast = Toastify({
-    text: "You are being logged out...",
-    duration: 1000
-  });
-
-  // For logout
-  function logOut() {
-    if (confirm("Really want to log out?")) {
-      fetch("/", {
-        method: "DELETE",
-      })
-      .then((response) => {
-        if (response.ok) {
-          logoutToast.showToast();  
-        } else {
-          console.log("Logout failed. Status code:", response.status);
-        }
-      })
-      .catch((error) => {
-        console.error("An error occurred during logout:", error);
-      });
-    } else {
-      console.log("Logout canceled by the user.");
-    }
-  }
-
-    // Function to set the active class on the current menu item
-    function setActiveMenuItem() {
-    const currentPath = window.location.pathname; 
-    const menuItems = document.querySelectorAll('.menu-item a');
-    
-    // Iterate over each menu item and set active class if href matches the current path
-    menuItems.forEach(item => {
-      if (item.getAttribute('href') === currentPath) {
-        item.classList.add('active');
-      } else {
-        item.classList.remove('active');
-      }
-    });
-  }
-
-  // Run the function on page load
-  window.onload = setActiveMenuItem;
-
-</script>
-</div>
+        <div class="menu-item"><a href="/users">Users</a></div>
+          <% if (loggedInUser && loggedInUser.name) { %>
+            <div class="menu-item" onclick="logOut()"><a href="/">Logout</a></div>
+          <% } else { %>
+            <div class="menu-item"><a href="/">Login</a></div>
+          <% } %>
+        </div>

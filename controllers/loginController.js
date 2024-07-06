@@ -22,6 +22,7 @@ const getLogin = (req, res) => {
 
 // save user 
 const loginUser = async (req, res) => {
+    console.log("Body", req.body);
     try {
         const { username, password } = req.body ;
         
@@ -61,11 +62,11 @@ const loginUser = async (req, res) => {
             httpOnly: true,
             signed: true,
         });
-        // Redirect to inbox page
-        res.render("inbox",{
-            title : "Inbox Page",
-            loggedInUser : userObject,
+        res.status(200).json({
+            status : "ok",
+            message : "Logged In Successfully. 🚀"
         });
+       
     } catch (error) {
         console.log(error);
         res.render("index", {
