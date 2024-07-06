@@ -69,16 +69,10 @@ const loginUser = async (req, res) => {
        
     } catch (error) {
         console.log(error);
-        res.render("index", {
-            data: {
-                username
-            },
-            errors: {
-              common: {
-                msg: error.message,
-              },
-            },
-        });
+        res.status(500).json({
+            status : "error",
+            message : "Internal serevr error :", error
+        })
     }
 }
 

@@ -13,7 +13,6 @@ const getInbox = async (req, res) => {
             select: ['name', 'avatar'] 
         })
         .sort({ last_updated: -1 });
-        console.log(all_conversation);
         res.render('inbox', {
             all_conversation
         })
