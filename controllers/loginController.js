@@ -22,7 +22,6 @@ const getLogin = (req, res) => {
 
 // save user 
 const loginUser = async (req, res) => {
-    console.log("Body", req.body);
     try {
         const { username, password } = req.body ;
         
@@ -30,17 +29,17 @@ const loginUser = async (req, res) => {
             $or: [{ mobile : username }, { email : username}],
         }) ;
         if (!isUser) {
-            return res.status(400).json({
+            return res.status(400).json([{
                 status : "error",
                 message : "No user found with this email or mobile."
-            });
+            }]);
         }
         const isMatched = await bcrypt.compare(password, isUser.password );
         if (!isMatched) {
-            return res.status(400).json({
+            return res.status(400).json([{
                 status : "error",
                 message : "Wrong password."
-            });
+            }]);
         };
         const {_id, name , email, mobile, avatar} = isUser ;
         const userObject = {
@@ -69,10 +68,10 @@ const loginUser = async (req, res) => {
        
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+        res.status(500).json([{
             status : "error",
             message : "Internal serevr error :", error
-        })
+        }])
     }
 }
 

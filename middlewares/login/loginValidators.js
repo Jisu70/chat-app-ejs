@@ -24,10 +24,8 @@ const loginValidationHandler = function (req, res, next) {
   // Extract errors in a readable format
   const errorMessages = errors.array().map(error => ({ [error.path]: error.msg }));
   if (errorMessages.length === 0) {
-    console.log("no error");
     next();
   } else {
-    console.log("no error");
     res.status(400).json(errorMessages)
   }
 }

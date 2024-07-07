@@ -41,7 +41,6 @@ body {
 p.error {
   color: var(--red);
   font-size: 1.2rem;
-  display: none;
 }
 
 .show {
@@ -495,7 +494,7 @@ input[type="submit"]:active {
 #left-column {
   grid-area: left-column;
   background-color: var(--tertiary);
-  background-image: url("../images/illustration.png");
+  background-image: url("../images/chat.png");
   background-size: 68%;
   background-position: center;
   background-repeat: no-repeat;
@@ -829,4 +828,8 @@ input[type="submit"]:active {
 }
 .hidden {
   visibility: hidden;
+}
+
+#api_error {
+    text-align: center;
 }
