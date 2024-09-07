@@ -427,7 +427,7 @@ input[type="submit"]:active {
   outline: none;
   padding: 15px;
   border: 2px solid var(--dark);
-  color: #330;
+  color: rgb(255, 255, 255);
   border-radius: 6px;
   font-size: 1.4rem;
 }
@@ -832,4 +832,10 @@ input[type="submit"]:active {
 
 #api_error {
     text-align: center;
+}
+
+#new-coversation-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

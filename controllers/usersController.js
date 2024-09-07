@@ -103,6 +103,8 @@ const deleteUser = async (req, res) => {
 const searchUser = async (req, res) => {
     try {
         const { input } = req.query;
+        const authenticatedUserId = req.user._id;
+        
         // regex search 
         const searchRegex = new RegExp(input, 'i');
         const isUser = await User.find({
@@ -110,7 +112,8 @@ const searchUser = async (req, res) => {
                 { name: { $regex: searchRegex } }, 
                 { email: { $regex: searchRegex } }, 
                 { mobile: { $regex: searchRegex } }
-            ]
+            ],
+            _id: { $ne: authenticatedUserId }
         }, { password: 0, createdAt : 0, updatedAt : 0, __v : 0 });
         return res.status(200).json({
             status : "ok",
@@ -122,7 +125,7 @@ const searchUser = async (req, res) => {
         res.status(500).json({
             errors: {
               common: {
-                msg: err.message,
+                msg: error.message,
               },
             },
         });

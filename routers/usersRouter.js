@@ -16,5 +16,5 @@ router.post('/', avatarUpload, addUserValidators, addUserValidationHandler, addU
 // To Delete the user 
 router.delete('/:userId', deleteUser) ;
 // To find the user
-router.get('/search-user', searchUser )
+router.get('/search-user', checkLogin, searchUser )
 module.exports = router;

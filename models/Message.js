@@ -25,6 +25,7 @@ const messageSchema = mongoose.Schema({
     conversation_id: {
         type: mongoose.Types.ObjectId,
         required: true,
+        ref: 'Conversation'
     },
 }, {
     timestamps: true,

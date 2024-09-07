@@ -7,8 +7,9 @@
     <div id="conversation-list">
         <% if (all_conversation.length > 0) { %> <% all_conversation.forEach((conversation) => { %>
         <div class="conversation" onclick="getMessages('<%= conversation._id %>')">
-            <img src="./uploads/avatars/<%= conversation.participant.avatar %>" alt="" />
-            <div class="title-text"><%= conversation.participant.id.name %></div>
+          <%= console.log("VVV", conversation) %>
+            <img src="./uploads/avatars/<%= conversation.participant %>" alt="" />
+            <div class="title-text"><%= conversation.participant %></div>
             <di class="created-date"> Apr 16 </di>
             <div class="conversation-message">This is a message</div>
         </div>
@@ -60,7 +61,7 @@
 </div>
 <%- include('./partials/add-conversation-modal.ejs'); %>
 <script>
-    const chat_form = document.getElementById("chat-form");
+  const chat_form = document.getElementById("chat-form");
   // create Conversation
   async function createConversation(participant_id) {
     try {
@@ -130,14 +131,23 @@
       console.log(error);
     }
   }
-
+  
   // Message submit 
-  chat_form.addEventListener("submit", (e) => {
+  chat_form.addEventListener("submit", async (e) => {
     e.preventDefault(); 
     const form_data = new FormData(chat_form) ;
-    for(data of form_data.entries()){
-      console.log(data);
-    }
+    // for(data of form_data.entries()){
+      //   console.log(data);
+      // }
+      const response = await fetch("/inbox/submit-message", {
+        method: "POST",
+        body: form_data,
+      })
+      .then((data) => {
+        console.log(data);
+      })
+
+
   });
 </script>
 <%- include('./partials/footer.ejs'); %>
