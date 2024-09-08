@@ -182,9 +182,9 @@ const submitMessage = async (req, res) => {
 
         // Save the message to the database
         const savedMessage = await newMessage.save();
-
+        
         // Emit socket event for new message
-        global.io.emit("new_message", {
+        global.io.to(conversation_id).emit("new_message", {
             conversation_id: conversation_id,
             sender: {
                 id: loggedin_userid,
@@ -197,7 +197,7 @@ const submitMessage = async (req, res) => {
             },
             message: savedMessage.text,
             attachment: savedMessage.attachment,
-            date_time: savedMessage.createdAt, // Extract the message creation time
+            date_time: savedMessage.createdAt,
         });
 
         // Send the newly created message back as a response

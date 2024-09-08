@@ -1,66 +1,3 @@
-<%- include('./partials/header.ejs'); %>
-<div id="chat-container">
-    <div id="search-container">
-        <input type="text" placeholder="Search" />
-    </div>
-    <!-- Conversation List start -->
-    <div id="conversation-list">
-        <% if (all_conversation.length > 0) { %> <% all_conversation.forEach((conversation) => { %>
-        <div class="conversation" onclick="getMessages('<%= conversation._id %>')">
-            <img src="./uploads/avatars/<%= conversation?.otherUser.avatar %>" alt="" />
-            <div class="title-text"><%= conversation?.otherUser.name %></div>
-            <div class="conversation-message"><%= conversation?.lastmessage.sender %> <%= conversation?.lastmessage.text %></div>
-            <di class="created-date"><%=conversation?.lastmessage.date_time%></di>
-        </div>
-        <% }) %> <% } %>
-
-        <!-- show no conversation placeholder image for 0 conversations -->
-        <% if(all_conversation && all_conversation.length === 0) { %>
-        <div class="nothing"><img src="./images/no-conversation.svg" /></div>
-        <% } %>
-    </div>
-    <!-- Conversation List end -->
-    <div id="new-coversation-container">
-        <a href="#" onclick="openModal()">+</a>
-    </div>
-    <!-- Delete converstion -->
-    <div id="chat-title">
-        <span id="conversation-partner"></span>
-        <img src="./images/trash.png" alt="Delete Conversation" />
-    </div>
-    <!-- Delete converstion -->
-    <!-- placeholder div if no messages are in messages area -->
-    <div id="chat-message-list">
-        <div class="nothing">select a conversation</div>
-    </div>
-    <!-- send message form -->
-    <form id="chat-form" method="post" enctype="multipart/form-data" class="hidden">
-        <input type="hidden" name="conversation_id" id="conversation_id" value="" />
-        <label for="attachment"><img src="./images/attachment.png" alt="Add Attachment" /></label>
-        <input type="file" multiple name="attachment" class="hide" id="attachment" />
-        <input type="text" name="message" placeholder="Type a message" />
-        <button type="submit" style="display: none;"></button>
-    </form>
-</div>
-
-<div class="modal-wrapper">
-    <div class="modal">
-        <a href="#" class="modal-close">+</a>
-        <div class="modal-title">
-            <h2>Create New Conversation</h2>
-        </div>
-        <div class="modal-body">
-            <form>
-                <input type="text" placeholder="Name" />
-                <input type="text" placeholder="Username" />
-                <input type="button" value="Submit" />
-            </form>
-        </div>
-    </div>
-</div>
-<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-<script src="https://rawgit.com/moment/moment/2.2.1/min/moment.min.js"></script>
-<script>
 const chat_form = document.getElementById("chat-form");
 const chatTitleContainer = document.querySelector("#chat-message-list");
 const loggedinUserId = "<%= loggedinUserId %>";
@@ -235,7 +172,3 @@ chat_form.addEventListener("submit", async (e) => {
         chat_form.reset();
     }
 });
-
-</script>
-<%- include('./partials/add-conversation-modal.ejs'); %>
-<%- include('./partials/footer.ejs'); %>

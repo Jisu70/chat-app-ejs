@@ -1,12 +1,13 @@
 // external imports
 const express = require("express");
-const http = require("http");
+const { createServer } = require("node:http");
 require("dotenv").config()
-const path = require("path");
+const path = require("node:path");
 const cookieParser = require("cookie-parser");
 const loginRouter = require("./routers/loginRouter.js");
 const usersRouter = require("./routers/usersRouter.js");
 const inboxRouter = require("./routers/inboxRouter.js");
+const { Server } = require("socket.io");
 // DB connection
 const dbConnect = require('./utils/dbConnect.js')
 // internal imports
@@ -16,13 +17,12 @@ const {
 } = require("./middlewares/common/errorHandler.js");
  
 const app = express();
-const server = http.createServer(app);
+const server = createServer(app);
 
 // socket creation
-const io = require("socket.io")(server);
-global.io = io;
-
-dbConnect()
+const io = new Server(server);
+global.io = io; // Make socket available in all files
+dbConnect() // database connection
 
 // request parsers
 app.use(express.json());
@@ -42,10 +42,21 @@ app.use("/", loginRouter);
 app.use("/users", usersRouter);
 app.use("/inbox", inboxRouter);
 
-// 404 not found handler
-app.use(notFoundHandler);
-// common error handler
-app.use(errorHandler);
+// Error handling middlewares
+app.use(notFoundHandler);// 404 not found handler
+app.use(errorHandler);// common error handler
+
+// event handling
+io.on('connection', (socket) => {
+  socket.on('join_room', ({ conversation_id }) => {
+      socket.join(conversation_id);
+  });
+
+  socket.on('leave_room', ({ conversation_id }) => {
+      socket.leave(conversation_id);
+  });
+});
+
 server.listen(process.env.PORT, () => {
   console.log(`app listening to port ${process.env.PORT}`);
 });
