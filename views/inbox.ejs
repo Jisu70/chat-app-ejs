@@ -7,10 +7,10 @@
     <div id="conversation-list">
         <% if (all_conversation.length > 0) { %> <% all_conversation.forEach((conversation) => { %>
         <div class="conversation" onclick="getMessages('<%= conversation._id %>')">
-            <img src="./uploads/avatars/<%= conversation.otherUser?.avatar %>" alt="" />
-            <div class="title-text"><%= conversation.otherUser?.name %></div>
-            <div class="conversation-message"><%= conversation.lastmessage.sender  %> : <%= conversation.lastmessage.text %></div>
-            <di class="created-date"><%= conversation.lastmessage.date_time %></di>
+            <img src="./uploads/avatars/<%= conversation?.otherUser.avatar %>" alt="" />
+            <div class="title-text"><%= conversation?.otherUser.name %></div>
+            <div class="conversation-message"><%= conversation?.lastmessage.sender %> <%= conversation?.lastmessage.text %></div>
+            <di class="created-date"><%=conversation?.lastmessage.date_time%></di>
         </div>
         <% }) %> <% } %>
 
@@ -58,9 +58,14 @@
         </div>
     </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.3/socket.io.min.js"></script>
+<script src="https://rawgit.com/moment/moment/2.2.1/min/moment.min.js"></script>
+
 <%- include('./partials/add-conversation-modal.ejs'); %>
 <script>
   const chat_form = document.getElementById("chat-form");
+  const chatTitleContainer = document.querySelector('#chat-message-list');
+
   // create Conversation
   async function createConversation(participant_id) {
     try {
@@ -110,34 +115,75 @@
   });
 
   // Get message of the chats 
-  async function getMessages (conversation_id){
+  async function getMessages(conversation_id) {
     try {
-      const conversationIdInput = document.getElementById('conversation_id');
-      conversationIdInput.value = conversation_id;
+        const conversationIdInput = document.getElementById("conversation_id");
+        conversationIdInput.value = conversation_id;
 
-      const response = await fetch("/inbox/get-message", {
-        method: "POST",
-        body: JSON.stringify({
-          conversation_id
-        }),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-        },
-      });
-      const data = await response.json() ;
+        const response = await fetch(`/inbox/get-message/${conversation_id}`, {
+            method: "GET",
+        });
+        const result = await response.json();
+        console.log(result);
+
+        if (result && result.data) {
+            chat_form.style.visibility = "visible";
+            const { data, loggedinUserId } = result;
+
+            if (data) {
+                let allMessages = "";
+                data.forEach((message) => {
+                  
+                    let senderAvatar = message.sender.avatar ? `./uploads/avatars/${message.sender.avatar}` : "./images/nophoto.png";
+                    const messageClass = message.sender.id === loggedinUserId ? "you-message" : "other-message";
+                    const showAvatar = message.sender.id === loggedinUserId ? "" : `<img src="${senderAvatar}" alt="${message.sender.name}" />`;
+
+                    // message attachments
+                    let attachments = '<div class="attachments">';
+
+                    if (message.attachment && message.attachment.length > 0) {
+                        message.attachment.forEach((attachment) => {
+                            attachments += `<img src="./uploads/attachments/${attachment}" /> `;
+                        });
+                    }
+
+                    attachments += "</div>";
+
+                    // final message html
+                    let messageHTML = `<div class="message-row ${messageClass}"><div class="message-content">
+                      ${showAvatar}
+                      <div class="message-text">${message.text}</div>
+                      ${attachments}
+                      <div class="message-time">${moment(message.date_time).fromNow()}</div>
+                    </div></div>`;
+
+                    allMessages += messageHTML;
+                });
+                chatTitleContainer.innerHTML = allMessages;
+            }
+        } else {
+            const messagesFailureToast = Toastify({
+                text: "Error loading messages!",
+                duration: 1000,
+            });
+            messagesFailureToast.showToast();
+        }
     } catch (error) {
-      console.log(error);
+        console.log(error);
     }
-  }
+}
   
   // Message submit 
   chat_form.addEventListener("submit", async (e) => {
     e.preventDefault(); 
     const form_data = new FormData(chat_form) ;
-      const response = await fetch("/inbox/submit-message", {
-        method: "POST",
-        body: form_data,
-      })
+    const response = await fetch("/inbox/submit-message", {
+      method: "POST",
+      body: form_data,
+    })
+    if (response.status === 201 ) {
+      chat_form.reset();
+    }
   });
 </script>
 <%- include('./partials/footer.ejs'); %>

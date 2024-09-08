@@ -21,13 +21,13 @@ const getInbox = async (req, res) => {
             select: ['name', 'avatar'] 
         })
         .sort({ last_updated: -1 });
-
+        
         const conversationsWithLastMessage = await Promise.all(all_conversations.map(async (conversation) => {
             const lastMessage = await Message.findOne({ conversation_id: conversation._id })
-              .sort({ date_time: -1 }) 
-              .select('text sender date_time')
-              .lean();
-            
+            .sort({ date_time: -1 }) 
+            .select('text sender date_time')
+            .lean();
+ 
             let otherUser;
             if (String(conversation.creator._id) === String(authenticated_userid)) {
                 otherUser = {
@@ -42,16 +42,15 @@ const getInbox = async (req, res) => {
                     avatar: conversation.creator.avatar
                 };
             }
-            
             return {
                 _id: conversation._id,
                 otherUser: otherUser,
-                lastmessage: {
+                lastmessage : lastMessage ?  {
                     _id: lastMessage._id,
                     text: lastMessage.text,
-                    sender : authenticated_userid === String(lastMessage.sender.id) ? 'You' : otherUser.name ,
+                    sender : authenticated_userid === String(lastMessage.sender.id) ? 'You' : otherUser.name,
                     date_time: formatDateTime(lastMessage.date_time)
-                }
+                } : {}
             };
         }));
         
@@ -110,21 +109,27 @@ const crerateConversation = async (req, res) => {
     }
 }
 
-// Get message of the selected conversation 
-const getMessage = async (req, res) => {
+// get messages of a conversation
+async function getMessages(req, res, next) {
     try {
-        const { conversation_id } = req.body;
-
-        // Find messages with the specified conversation_id
-        const get_conversation_message = await Message.find({ conversation_id });
-
-        console.log("get_conversation_message", get_conversation_message);
-        res.json(get_conversation_message);
-    } catch (error) {
-        console.error("Error fetching conversation messages:", error);
-        res.status(500).send("An error occurred while fetching the messages");
+      const messages = await Message.find({
+        conversation_id: req.params.conversation_id,
+      }).sort("-createdAt");
+  
+      res.status(200).json({
+        data : messages,
+        loggedinUserId : req.user._id
+      });
+    } catch (err) {
+      res.status(500).json({
+        errors: {
+          common: {
+            msg: "Unknows error occured!",
+          },
+        },
+      });
     }
-};
+  }
 
 
 
@@ -180,6 +185,6 @@ const submitMessage = async (req, res) => {
 module.exports = {
     getInbox,
     crerateConversation,
-    getMessage,
+    getMessages,
     submitMessage
 }

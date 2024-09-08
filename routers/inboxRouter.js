@@ -1,7 +1,7 @@
 // Importing express
 const express = require('express');
 const router = express.Router() ;
-const { getInbox, crerateConversation, getMessage, submitMessage } = require('../controllers/inboxController.js')
+const { getInbox, crerateConversation, getMessages, submitMessage } = require('../controllers/inboxController.js')
 // Decorate html middleware
 const decorateHtmlResponse = require("../middlewares/common/decorateHtmlResponse");
 // Check login middleware
@@ -15,7 +15,7 @@ router.get('/', decorateHtmlResponse("Inbox"), checkLogin, getInbox ) ;
 router.post('/create-conversation', checkLogin, crerateConversation) ;
 
 // Get message 
-router.post('/get-message',checkLogin, getMessage);
+router.get('/get-message/:conversation_id',checkLogin, getMessages);
 
 // Submit message 
 router.post('/submit-message', attachmentUpload, checkLogin, submitMessage);

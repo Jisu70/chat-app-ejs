@@ -278,6 +278,7 @@ input[type="submit"]:active {
 .created-date {
   color: #ddd;
   font-size: 1rem;
+  white-space: nowrap;
 }
 
 .conversation-message {

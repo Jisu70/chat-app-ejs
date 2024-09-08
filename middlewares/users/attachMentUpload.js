@@ -20,7 +20,6 @@ function attachmentUpload(req, res, next) {
         },
       });
     } else {
-      console.log("File uploaded successfully:", req.files);
       next();
     }
   });
