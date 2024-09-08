@@ -66,10 +66,9 @@
 const chat_form = document.getElementById("chat-form");
 const chatTitleContainer = document.querySelector("#chat-message-list");
 const loggedinUserId = "<%= loggedinUserId %>";
-
-// socket initialization
 const socket = io("<%= process.env.APP_URL %>");
 let current_conversation_id;
+
 // create Conversation
 async function createConversation(participant_id) {
     try {
@@ -120,6 +119,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Listen for new messages emitted by the server
 socket.on("new_message", (data) => {
+  
     // only respond if current conversation is open in any client
     if (data.conversation_id === current_conversation_id) {
         // message class
