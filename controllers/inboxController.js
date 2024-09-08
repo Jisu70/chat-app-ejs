@@ -55,7 +55,8 @@ const getInbox = async (req, res) => {
         }));
         
         res.render('inbox', {
-            all_conversation: conversationsWithLastMessage
+            all_conversation: conversationsWithLastMessage,
+            loggedinUserId : authenticated_userid 
         });
 
     } catch (error) {
@@ -118,7 +119,8 @@ async function getMessages(req, res, next) {
   
       res.status(200).json({
         data : messages,
-        loggedinUserId : req.user._id
+        loggedinUserId : req.user._id,
+        conversation_id : req.params.conversation_id
       });
     } catch (err) {
       res.status(500).json({
@@ -140,6 +142,7 @@ const submitMessage = async (req, res) => {
         const loggedin_userid = req.user._id;
         const loggedin_username = req.user.name;
 
+        // Find the conversation and populate creator and participant names
         const conversation = await Conversation.findById(conversation_id)
             .populate('creator', 'name')
             .populate('participant', 'name')
@@ -149,17 +152,20 @@ const submitMessage = async (req, res) => {
             return res.status(404).json({ error: 'Conversation not found' });
         }
 
-        const { creator: { name: creator_name, _id : creator_id }, participant: { name: participant_name, _id: participant_id } } = conversation;
+        // Destructure the creator and participant details
+        const { creator: { name: creator_name, _id: creator_id }, participant: { name: participant_name, _id: participant_id } } = conversation;
 
+        // Determine receiver details based on logged-in user
         let receiverId, receiverName;
         if (loggedin_userid === creator_id.toString()) {
             receiverId = participant_id.toString();
             receiverName = participant_name;
         } else {
-            receiverId = creator_id.toString();;
+            receiverId = creator_id.toString();
             receiverName = creator_name;
         }
 
+        // Create a new message instance
         const newMessage = new Message({
             text: message,
             attachment: attachments ? attachments.map(file => file.fileName) : [],
@@ -174,13 +180,34 @@ const submitMessage = async (req, res) => {
             conversation_id: conversation_id
         });
 
-        await newMessage.save();
-        res.status(201).json(newMessage);
+        // Save the message to the database
+        const savedMessage = await newMessage.save();
+
+        // Emit socket event for new message
+        global.io.emit("new_message", {
+            conversation_id: conversation_id,
+            sender: {
+                id: loggedin_userid,
+                name: loggedin_username,
+                avatar: null,
+            },
+            receiver: {
+                id: receiverId,
+                name: receiverName,
+            },
+            message: savedMessage.text,
+            attachment: savedMessage.attachment,
+            date_time: savedMessage.createdAt, // Extract the message creation time
+        });
+
+        // Send the newly created message back as a response
+        res.status(201).json(savedMessage);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Failed to send message' });
     }
 };
+
 
 module.exports = {
     getInbox,

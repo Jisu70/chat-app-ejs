@@ -63,59 +63,106 @@
 
 <%- include('./partials/add-conversation-modal.ejs'); %>
 <script>
-  const chat_form = document.getElementById("chat-form");
-  const chatTitleContainer = document.querySelector('#chat-message-list');
+const chat_form = document.getElementById("chat-form");
+const chatTitleContainer = document.querySelector("#chat-message-list");
+const loggedinUserId = "<%= loggedinUserId %>";
 
-  // create Conversation
-  async function createConversation(participant_id) {
+// socket initialization
+const socket = io("<%= process.env.APP_URL %>");
+let current_conversation_id;
+// create Conversation
+async function createConversation(participant_id) {
     try {
-      const response = await fetch("/inbox/create-conversation", {
-        method: "POST",
-        body: JSON.stringify({
-          id: participant_id,
-        }),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-        },
-      });
+        const response = await fetch("/inbox/create-conversation", {
+            method: "POST",
+            body: JSON.stringify({
+                id: participant_id,
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8",
+            },
+        });
 
-      const result = await response.json();
+        const result = await response.json();
 
-      if (!result.errors) {
-        // reset
-        users_placeholder.style.display = "none";
-        input.value = name;
-        // reload the page after 1 second
-        setTimeout(() => {
-          location.reload();
-        }, 1000);
-      } else {
-        throw new Error(result.errors.common.msg);
-      }
+        if (!result.errors) {
+            // reset
+            users_placeholder.style.display = "none";
+            input.value = name;
+            // reload the page after 1 second
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        } else {
+            throw new Error(result.errors.common.msg);
+        }
     } catch (err) {
-      const toastObject = showErrorToast(err)
-      toastObject.showToast();
+        const toastObject = showErrorToast(err);
+        toastObject.showToast();
     }
-  }
-  // To ACtive the slected chat
-  document.addEventListener("DOMContentLoaded", function () {
-    var conversations = document.querySelectorAll('.conversation');
+}
+// To ACtive the slected chat
+document.addEventListener("DOMContentLoaded", function () {
+    var conversations = document.querySelectorAll(".conversation");
 
     conversations.forEach(function (conversation) {
-      conversation.addEventListener('click', function () {
-        // Remove 'active' class from all conversations
-        conversations.forEach(function (conv) {
-          conv.classList.remove('active');
+        conversation.addEventListener("click", function () {
+            // Remove 'active' class from all conversations
+            conversations.forEach(function (conv) {
+                conv.classList.remove("active");
+            });
+            // Add 'active' class to the clicked conversation
+            conversation.classList.add("active");
+            chat_form.style.visibility = "visible";
         });
-        // Add 'active' class to the clicked conversation
-        conversation.classList.add('active');
-        chat_form.style.visibility = 'visible'
-      });
     });
-  });
+});
 
-  // Get message of the chats 
-  async function getMessages(conversation_id) {
+// Listen for new messages emitted by the server
+socket.on("new_message", (data) => {
+    // only respond if current conversation is open in any client
+    if (data.conversation_id === current_conversation_id) {
+        // message class
+        const messageClass = data.sender.id === loggedinUserId ? "you-message" : "other-message";
+
+        const senderAvatar = data.sender.avatar ? `<img src="./uploads/avatars/${data.sender.avatar}" alt="${data.sender.name}" />` : `<img src="./images/nophoto.png" alt="${data.sender.name}" />`;
+
+        // message attachments
+        let attachments = '<div class="attachments">';
+
+        if (data.attachment && data.attachment.length > 0) {
+            data.attachment.forEach((attachment) => {
+                attachments += `<img src="./uploads/attachments/${attachment}" /> `;
+            });
+        }
+
+        attachments += "</div>";
+
+        let messageHTML;
+
+        // do not show avatar for loggedin user
+        if (data.sender.id === loggedinUserId) {
+            messageHTML = `<div class="message-row ${messageClass}"><div class="message-content">
+              <div class="message-text">${data.message}</div>
+              ${attachments}
+              <div class="message-time">${moment(data.date_time).fromNow()}</div>
+            </div></div>`;
+        } else {
+            messageHTML = `<div class="message-row ${messageClass}"><div class="message-content">
+            ${senderAvatar}
+            <div class="message-text">${data.message}</div>
+            ${attachments}
+            <div class="message-time">${moment(data.date_time).fromNow()}</div>
+            </div></div>`;
+        }
+
+        // append the inoming message to message area as last item
+        document.querySelector("#chat-message-list > .message-row:first-child").insertAdjacentHTML("beforeBegin", messageHTML);
+    }
+});
+
+// Get message of the chats
+async function getMessages(conversation_id) {
     try {
         const conversationIdInput = document.getElementById("conversation_id");
         conversationIdInput.value = conversation_id;
@@ -124,16 +171,14 @@
             method: "GET",
         });
         const result = await response.json();
-        console.log(result);
 
         if (result && result.data) {
             chat_form.style.visibility = "visible";
             const { data, loggedinUserId } = result;
-
+            current_conversation_id = conversation_id;
             if (data) {
                 let allMessages = "";
                 data.forEach((message) => {
-                  
                     let senderAvatar = message.sender.avatar ? `./uploads/avatars/${message.sender.avatar}` : "./images/nophoto.png";
                     const messageClass = message.sender.id === loggedinUserId ? "you-message" : "other-message";
                     const showAvatar = message.sender.id === loggedinUserId ? "" : `<img src="${senderAvatar}" alt="${message.sender.name}" />`;
@@ -172,18 +217,19 @@
         console.log(error);
     }
 }
-  
-  // Message submit 
-  chat_form.addEventListener("submit", async (e) => {
-    e.preventDefault(); 
-    const form_data = new FormData(chat_form) ;
+
+// Message submit
+chat_form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const form_data = new FormData(chat_form);
     const response = await fetch("/inbox/submit-message", {
-      method: "POST",
-      body: form_data,
-    })
-    if (response.status === 201 ) {
-      chat_form.reset();
+        method: "POST",
+        body: form_data,
+    });
+    if (response.status === 201) {
+        chat_form.reset();
     }
-  });
+});
+
 </script>
 <%- include('./partials/footer.ejs'); %>

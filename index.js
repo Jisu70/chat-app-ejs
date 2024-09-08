@@ -1,6 +1,7 @@
 // external imports
 const express = require("express");
-const dotenv = require("dotenv").config()
+const http = require("http");
+require("dotenv").config()
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const loginRouter = require("./routers/loginRouter.js");
@@ -15,6 +16,11 @@ const {
 } = require("./middlewares/common/errorHandler.js");
  
 const app = express();
+const server = http.createServer(app);
+
+// socket creation
+const io = require("socket.io")(server);
+global.io = io;
 
 dbConnect()
 
@@ -40,6 +46,6 @@ app.use("/inbox", inboxRouter);
 app.use(notFoundHandler);
 // common error handler
 app.use(errorHandler);
-app.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, () => {
   console.log(`app listening to port ${process.env.PORT}`);
 });
