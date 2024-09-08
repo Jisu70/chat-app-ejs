@@ -41,9 +41,10 @@ const loginUser = async (req, res) => {
                 message : "Wrong password."
             }]);
         };
-        const {_id, name , email, mobile, avatar} = isUser ;
+        const {_id, name , email, mobile, avatar, role} = isUser ;
         const userObject = {
             _id,
+            role,
             name,
             email,
             mobile,

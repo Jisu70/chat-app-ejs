@@ -2,13 +2,16 @@
 const Conversation = require('../models/Converstion') ;
 const People = require('../models/People') ;
 const Message = require('../models/Message') ;
-
+const { formatDateTime } = require("../utilities/commonFunction")
 
 // Inbox page 
 const getInbox = async (req, res) => {
     try {
         const authenticated_userid = req.user._id ; 
-        const all_conversations = await Conversation.find({$or: [{creator:authenticated_userid }, {participant: authenticated_userid}]}, 'participant last_updated')
+
+        const all_conversations = await Conversation.find({
+            $or: [{ creator: authenticated_userid }, { participant: authenticated_userid }]
+        }, 'creator participant last_updated')
         .populate({
             path: 'participant',
             select: ['name', 'avatar'] 
@@ -18,27 +21,50 @@ const getInbox = async (req, res) => {
             select: ['name', 'avatar'] 
         })
         .sort({ last_updated: -1 });
+
         const conversationsWithLastMessage = await Promise.all(all_conversations.map(async (conversation) => {
             const lastMessage = await Message.findOne({ conversation_id: conversation._id })
               .sort({ date_time: -1 }) 
-              .select('text date_time')
+              .select('text sender date_time')
               .lean();
-              
-            return {
-                ...conversation,
-                lastmessage : lastMessage || null 
-            }
-        }));
             
+            let otherUser;
+            if (String(conversation.creator._id) === String(authenticated_userid)) {
+                otherUser = {
+                    _id: conversation.participant._id,
+                    name: conversation.participant.name,
+                    avatar: conversation.participant.avatar
+                };
+            } else {
+                otherUser = {
+                    _id: conversation.creator._id,
+                    name: conversation.creator.name,
+                    avatar: conversation.creator.avatar
+                };
+            }
+            
+            return {
+                _id: conversation._id,
+                otherUser: otherUser,
+                lastmessage: {
+                    _id: lastMessage._id,
+                    text: lastMessage.text,
+                    sender : authenticated_userid === String(lastMessage.sender.id) ? 'You' : otherUser.name ,
+                    date_time: formatDateTime(lastMessage.date_time)
+                }
+            };
+        }));
+        
         res.render('inbox', {
-            all_conversation : conversationsWithLastMessage
+            all_conversation: conversationsWithLastMessage
         });
 
     } catch (error) {
-        console.log(error) ;
+        console.log(error);
         res.status(500).send('Internal Server Error');
     }
 }
+
 
 // create conversation
 const crerateConversation = async (req, res) => {

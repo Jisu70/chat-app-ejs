@@ -7,11 +7,10 @@
     <div id="conversation-list">
         <% if (all_conversation.length > 0) { %> <% all_conversation.forEach((conversation) => { %>
         <div class="conversation" onclick="getMessages('<%= conversation._id %>')">
-          <%= console.log("VVV", conversation) %>
-            <img src="./uploads/avatars/<%= conversation.participant %>" alt="" />
-            <div class="title-text"><%= conversation.participant %></div>
-            <di class="created-date"> Apr 16 </di>
-            <div class="conversation-message">This is a message</div>
+            <img src="./uploads/avatars/<%= conversation.otherUser?.avatar %>" alt="" />
+            <div class="title-text"><%= conversation.otherUser?.name %></div>
+            <div class="conversation-message"><%= conversation.lastmessage.sender  %> : <%= conversation.lastmessage.text %></div>
+            <di class="created-date"><%= conversation.lastmessage.date_time %></di>
         </div>
         <% }) %> <% } %>
 
@@ -35,13 +34,13 @@
         <div class="nothing">select a conversation</div>
     </div>
     <!-- send message form -->
-    <form id="chat-form" method="post" enctype="multipart/form-data"  class="hidden">
-      <input type="hidden" name="conversation_id" id="conversation_id" value=""/>
-      <label for="attachment"><img src="./images/attachment.png" alt="Add Attachment" /></label>
-      <input type="file" multiple name="attachment" class="hide" id="attachment" />
-      <input type="text" name="message" placeholder="Type a message"/>
-      <button type="submit" style="display:none;"></button>
-    </form> 
+    <form id="chat-form" method="post" enctype="multipart/form-data" class="hidden">
+        <input type="hidden" name="conversation_id" id="conversation_id" value="" />
+        <label for="attachment"><img src="./images/attachment.png" alt="Add Attachment" /></label>
+        <input type="file" multiple name="attachment" class="hide" id="attachment" />
+        <input type="text" name="message" placeholder="Type a message" />
+        <button type="submit" style="display: none;"></button>
+    </form>
 </div>
 
 <div class="modal-wrapper">
@@ -126,7 +125,6 @@
         },
       });
       const data = await response.json() ;
-      console.log("Inbox data of get message", data);
     } catch (error) {
       console.log(error);
     }
@@ -136,18 +134,10 @@
   chat_form.addEventListener("submit", async (e) => {
     e.preventDefault(); 
     const form_data = new FormData(chat_form) ;
-    // for(data of form_data.entries()){
-      //   console.log(data);
-      // }
       const response = await fetch("/inbox/submit-message", {
         method: "POST",
         body: form_data,
       })
-      .then((data) => {
-        console.log(data);
-      })
-
-
   });
 </script>
 <%- include('./partials/footer.ejs'); %>
