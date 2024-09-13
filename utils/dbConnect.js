@@ -8,7 +8,9 @@ const dbConnect = () => {
         const connectionString = process.env.MONGO_CONNECTION_STRING + "/" + dbName;
 
         mongoose
-          .connect(connectionString)
+          .connect(connectionString, {
+            family : 4
+          })
           .then(() => console.log("database connection successful!"))
           .catch((err) => console.log(err));
     } catch (error) {
